@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="-1" />
+		<meta http-equiv="CACHE-CONTROL" content="NO-CACHE" />
+		<title>Example 1</title>
+		<script type="text/javascript" src="../src/event.js"></script>
+		<script type="text/javascript">
+		//sample object
+		debugger;
+		var dispatcher = Object.create(EventListener);
+		var target = Object.create(Object.prototype, {
+			handleEvent: {
+				value: function (evt) {
+					console.log(evt);
+					alert('event fired: ' + evt.type);
+				}
+			}
+		})
+		 dispatcher.addEventListener('foo', target);
+		var newEvent = Object.create(CustomEvent);
+		newEvent.initEvent('foo', false);
+		setTimeout(function () {
+			dispatcher.dispatchEvent(newEvent);
+		}, 10000);
+		</script>
+	</head>
+
+	<body>
+		<p>Test Page</p>
+	</body>
+
+</html>

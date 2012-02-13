@@ -112,7 +112,7 @@ var EventListener = Object.create(Object.prototype, {
 							eventOfType['handle' + type.charAt(0).toUpperCase() + type.substr(1)].call(eventOfType, customEvent);
 						} else if (eventOfType.hasOwnProperty('handleEvent')) {
 							eventOfType.handleEvent(customEvent);
-						} else if (eventOfType instanceof 'Function') {
+						} else if (eventOfType instanceof Function) {
 							eventOfType(customEvent);
 						}
 					}

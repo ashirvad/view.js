@@ -19,42 +19,44 @@ WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEM
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR 
 OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-
 //A more elegant design is to make this guy also event listener. However my other project has a need to make this obj call out methods explicitly.
 var ViewController = Object.create(Object.prototype, {
-	_views : {
-		writable: true,
-		configurable: true,
-		enumerable: true,
-		value: {}
-	},
-	registerView: {
-		writable: true,
-		configurable: true,
-		enumerable: true,
-		value: function(viewName, viewObject){
-			if((!this._views[viewName]) && !(viewObject instanceof Function)) {
-				this._views[viewName] = viewObject;
-			}
-		}
-	},
-	dispatchEventOnView: {
-		writable: true,
-		configurable: true,
-		enumerable: true,
-		value: function(viewName, operation, auxData){
-			var view = this._views[viewName],
-			    cEvent = new CustomEvent();
-			cEvent.initEvent(operation, false);
-			cEvent.auxData = auxData;
-			
-			if(view) {
-				view.dispatchEvent(cEvent);
-				if(view.redraw === true){ //Whats the trade off between this and setTieout ??
-					view.draw();
-					view.redraw = false;
-				}
-			}
-		}
-	},
+    _views: {
+        writable: true,
+        configurable: true,
+        enumerable: true,
+        value: {}
+    },
+    register: {
+        writable: true,
+        configurable: true,
+        enumerable: true,
+        value: function (viewName, viewObject) {
+            if (!this._views[viewName]) { // && !(viewObject instanceof Function)
+                this._views[viewName] = viewObject;
+            }
+        }
+    },
+    dispatchEventOnView: {
+        writable: true,
+        configurable: true,
+        enumerable: true,
+        value: function (viewName, operation, auxData) {
+            var view = this._views[viewName];
+            if (view) {
+                if (!(view instanceof Function)) {
+                    cEvent = new CustomEvent();
+                    cEvent.initEvent(operation, false);
+                    cEvent.auxData = auxData;
+                    view.dispatchEvent(cEvent);
+                    if (view.redraw === true) { //Whats the trade off between this and setTieout ??
+                        view.draw();
+                        view.redraw = false;
+                    }
+                } else {
+                	view(auxData);
+                }
+            }
+        }
+    },
 });

@@ -8,8 +8,6 @@
 		<title>Example 1</title>
 		<script type="text/javascript" src="../src/event.js"></script>
 		<script type="text/javascript">
-		//sample object
-		debugger;
 		var dispatcher = Object.create(EventListener);
 		var target = Object.create(Object.prototype, {
 			handleEvent: {
@@ -20,7 +18,12 @@
 			}
 		})
 		 dispatcher.addEventListener('foo', target);
-		var newEvent = Object.create(CustomEvent);
+		var newEvent = Object.create(CustomEvent, {
+			cancelable: {
+				writable: false,
+				value: 'foo-bar'
+			}
+		});debugger
 		newEvent.initEvent('foo', false);
 		setTimeout(function () {
 			dispatcher.dispatchEvent(newEvent);

@@ -3,6 +3,7 @@ The MIT License
 
 Copyright (c) 2011 Shakti Ashirvad 
 shakti.ashirvad@gmail.com
+https://github.com/ashirvad
 
 This file implements a Javascript custom event class and event listener interface. 
 Any object extending from these two objects will inherit the 
@@ -21,120 +22,118 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 var CustomEvent = Object.create(Object.prototype, {
-	type: {
-		writable: true,
-		configurable: true,
-		enumerable: true,
-		value: null
-	},
-	target: {
-		writable: true,
-		configurable: true,
-		enumerable: true,
-		value: null
-	},
-	cancelable: {
-		writable: true,
-		configurable: true,
-		enumerable: true,
-		value: false
-	},
-	timeStamp: {
-		writable: true,
-		configurable: true,
-		enumerable: true,
-		value: null
-	},
-	returnValue: {
-		writable: true,
-		configurable: true,
-		enumerable: true,
-		value: true
-	},
-	initEvent: {
-		writable: true,
-		configurable: true,
-		enumerable: true,
-		value: function (type, cancelable) {
-			this.type = type;
-			this.cancelable = cancelable;
-			this.timeStamp = Date.now();
-		}
-	},
-	preventDefault: {
-		writable: true,
-		configurable: true,
-		enumerable: true,
-		value: function () {
-			if (this.cancelable) {
-				this.returnValue = false;
-			}
-		}
-	}
+    type: {
+        writable: true,
+        configurable: true,
+        enumerable: true,
+        value: null
+    },
+    target: {
+        writable: true,
+        configurable: true,
+        enumerable: true,
+        value: null
+    },
+    cancelable: {
+        writable: true,
+        configurable: true,
+        enumerable: true,
+        value: false
+    },
+    timeStamp: {
+        writable: true,
+        configurable: true,
+        enumerable: true,
+        value: null
+    },
+    returnValue: {
+        writable: true,
+        configurable: true,
+        enumerable: true,
+        value: true
+    },
+    initEvent: {
+        writable: true,
+        configurable: true,
+        enumerable: true,
+        value: function (type, cancelable) {
+            this.type = type;
+            this.cancelable = cancelable;
+            this.timeStamp = Date.now();
+        }
+    },
+    preventDefault: {
+        writable: true,
+        configurable: true,
+        enumerable: true,
+        value: function () {
+            if (this.cancelable) {
+                this.returnValue = false;
+            }
+        }
+    }
 });
 /*
  * EventListener interface. Every object need to extend this Object (Not its prototype) to be able to behave as a EventListener interface
  */
 var EventListener = Object.create(Object.prototype, {
-	eventHandlers: {
-		writable: true,
-		configurable: true,
-		enumerable: true,
-		value: null
-	},
-	addEventListener: {
-		writable: true,
-		configurable: true,
-		enumerable: true,
-		value: function (type, handler) {
-			debugger;
-			if (!this.eventHandlers) {
-				this.eventHandlers = Object.create(null);
-			}
-			if (this.eventHandlers[type] === undefined) {
-				this.eventHandlers[type] = []; //Doesnt work ??? Object.create(Array.prototype);
-			}
-			this.eventHandlers[type].push(handler);
-		}
-	},
-	dispatchEvent: {
-		writable: true,
-		configurable: true,
-		enumerable: true,
-		value: function (customEvent) {
-			debugger;
-			customEvent.target = this;
-			var type = customEvent.type;
-			if (this.eventHandlers[type] !== undefined) {
-				this.eventHandlers[type].forEach(function (eventOfType) {
-					if (customEvent.returnValue) { //To check if someone has called preventDefault(), then dont execute.
-						if (eventOfType.hasOwnProperty('handle' + type.charAt(0).toUpperCase() + type.substr(1))) {
-							eventOfType['handle' + type.charAt(0).toUpperCase() + type.substr(1)].call(eventOfType, customEvent);
-						} else if (eventOfType.hasOwnProperty('handleEvent')) {
-							eventOfType.handleEvent(customEvent);
-						} else if (eventOfType instanceof Function) {
-							eventOfType(customEvent);
-						}
-					}
-				});
-				return customEvent.returnValue;
-			}
-		}
-	},
-	removeEventListener: {
-		writable: true,
-		configurable: true,
-		enumerable: true,
-		value: function (type, handler) {
-			if (this.eventHandlers[type] !== undefined) {
-				var tempHandlers = Object.create(Array.prototype);
-				this.eventHandlers[type].forEach(function (currentHandler) {
-					if (currentHandler !== handler) {
-						tempHandlers.push(currentHandler);
-					}
-				});
-				this.eventHandlers[type] = tempHandlers;
-			}
-		}
-	}
+    eventHandlers: {
+        writable: true,
+        configurable: true,
+        enumerable: true,
+        value: null
+    },
+    addEventListener: {
+        writable: true,
+        configurable: true,
+        enumerable: true,
+        value: function (type, handler) {
+            if (!this.eventHandlers) {
+                this.eventHandlers = Object.create(null);
+            }
+            if (this.eventHandlers[type] === undefined) {
+                this.eventHandlers[type] = []; //Doesnt work ??? Object.create(Array.prototype);
+            }
+            this.eventHandlers[type].push(handler);
+        }
+    },
+    dispatchEvent: {
+        writable: true,
+        configurable: true,
+        enumerable: true,
+        value: function (customEvent) {
+            customEvent.target = this;
+            var type = customEvent.type;
+            if (this.eventHandlers && this.eventHandlers[type] !== undefined) {
+                this.eventHandlers[type].forEach(function (eventOfType) {
+                    if (customEvent.returnValue) { //To check if someone has called preventDefault(), then dont execute.
+                        if (eventOfType.hasOwnProperty('handle' + type.charAt(0).toUpperCase() + type.substr(1))) {
+                            eventOfType['handle' + type.charAt(0).toUpperCase() + type.substr(1)].call(eventOfType, customEvent);
+                        } else if (eventOfType.hasOwnProperty('handleEvent')) {
+                            eventOfType.handleEvent(customEvent);
+                        } else if (eventOfType instanceof Function) {
+                            eventOfType(customEvent);
+                        }
+                    }
+                });
+                return customEvent.returnValue;
+            }
+        }
+    },
+    removeEventListener: {
+        writable: true,
+        configurable: true,
+        enumerable: true,
+        value: function (type, handler) {
+            if (this.eventHandlers && this.eventHandlers[type] !== undefined) {
+                var tempHandlers = Object.create(Array.prototype);
+                this.eventHandlers[type].forEach(function (currentHandler) {
+                    if (currentHandler !== handler) {
+                        tempHandlers.push(currentHandler);
+                    }
+                });
+                this.eventHandlers[type] = tempHandlers;
+            }
+        }
+    }
 });

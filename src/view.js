@@ -3,6 +3,7 @@ The MIT License
 
 Copyright (c) 2011 Shakti Ashirvad 
 shakti.ashirvad@gmail.com
+https://github.com/ashirvad
 
 Defines a skeliton of a view. A screen on application context. There are different ways views can be represented
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
@@ -19,16 +20,67 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 var View = Object.create(EventListener, {
-	element: {
-		writable: true,
-		configurable: true,
-		enumerable: true,
-		value: null
-	},
-	redraw: {
-			writable: true,
-			configurable: true,
-			enumerable: true,
-			value: true
-	}
+    element: {
+        writable: true,
+        configurable: true,
+        enumerable: true,
+        value: null
+    },
+    _redraw: {
+        writable: true,
+        configurable: true,
+        enumerable: true,
+        value: false
+    },
+    redraw: {
+        configurable: true,
+        enumerable: true,
+        get: function(){
+            return this._redraw;
+        },
+        set: function(val){
+            if(val){
+                this._redraw = true;
+                if(this.timeout){
+                    clearTimeout(this.timeout);
+                    this.timeout = null;
+                }
+                var that = this;
+                //Schedule a draw immediately
+                this.timeout = setTimeout(function(){
+                   that.draw(); 
+                   that._redraw = false;
+                   that.timeout = null;
+                },0);
+            }
+        }
+    },
+    hasModal: {
+        writable: true,
+        configurable: true,
+        enumerable: true,
+        value: false
+    },
+    initialized: {
+        writable: true,
+        configurable: true,
+        enumerable: true,
+        value: false
+    },
+    draw: {
+        writable: true,
+        configurable: true,
+        enumerable: true,
+        value: function () {
+            //NOP
+        }
+    },
+    reset: {
+        value: function () {
+            this.initialized = false;
+            this.hasModal = false;
+            this.redraw = false;
+            this.element = null;
+        }
+    }
 });

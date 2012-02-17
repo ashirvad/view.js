@@ -3,6 +3,7 @@ The MIT License
 
 Copyright (c) 2011 Shakti Ashirvad 
 shakti.ashirvad@gmail.com
+https://github.com/ashirvad
 
 This file implements a ViewController interface.
 
@@ -32,7 +33,11 @@ var ViewController = Object.create(Object.prototype, {
         configurable: true,
         enumerable: true,
         value: function (viewName, viewObject) {
-            if (!this._views[viewName]) { // && !(viewObject instanceof Function)
+            if (!this._views[viewName] && !(viewObject instanceof Function)) {
+                this._views[viewName] = viewObject;
+                viewObject.addEventListener('focus', viewObject);
+                viewObject.addEventListener('blur', viewObject);
+            } else {
                 this._views[viewName] = viewObject;
             }
         }
@@ -45,18 +50,35 @@ var ViewController = Object.create(Object.prototype, {
             var view = this._views[viewName];
             if (view) {
                 if (!(view instanceof Function)) {
-                    cEvent = new CustomEvent();
+                    if (!view.initialized && view.hasOwnProperty('init')) {
+                        view.init();
+                        view.initialized = true;
+                    }
+                    cEvent = Object.create(CustomEvent);
                     cEvent.initEvent(operation, false);
                     cEvent.auxData = auxData;
                     view.dispatchEvent(cEvent);
-                    if (view.redraw === true) { //Whats the trade off between this and setTieout ??
+                    /*if (view.redraw === true) { //Whats the trade off between this and setTimeout ??
                         view.draw();
                         view.redraw = false;
-                    }
+                    }*/
+                    //Returns if the event gets preventDefault()
+                    return !cEvent.returnValue;
                 } else {
-                	view(auxData);
-                }
-            }
-        }
+                    if (operation !== 'blur') {
+                        view(auxData);
+                    }
+                    return false;
+                } //IF Not instanceof Function
+            } //IF View
+        } //Function
     },
+    getViewByName: {
+        writable: true,
+        configurable: true,
+        enumerable: true,
+        value: function (viewName) {
+            return this._views[viewName];
+        }
+    }
 });

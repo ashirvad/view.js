@@ -21,6 +21,8 @@ WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEM
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR 
 OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+"use strict";
+
 var CustomEvent = Object.create(Object.prototype, {
     type: {
         writable: true,
@@ -34,6 +36,12 @@ var CustomEvent = Object.create(Object.prototype, {
         enumerable: true,
         value: null
     },
+	auxData: {
+		writable: true,
+		configurable: true,
+		enumerable: true,
+		value: null
+	},
     cancelable: {
         writable: true,
         configurable: true,
@@ -94,7 +102,11 @@ var EventListener = Object.create(Object.prototype, {
             if (this.eventHandlers[type] === undefined) {
                 this.eventHandlers[type] = []; //Doesnt work ??? Object.create(Array.prototype);
             }
-            this.eventHandlers[type].push(handler);
+            if(this.eventHandlers[type].indexOf(handler) === -1){
+                this.eventHandlers[type].push(handler);
+            }else{
+                console.log('Already registered!!', type, handler, this);
+            }
         }
     },
     dispatchEvent: {

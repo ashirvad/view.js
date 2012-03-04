@@ -21,6 +21,7 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 //A more elegant design is to make this guy also event listener. However my other project has a need to make this obj call out methods explicitly.
+"use strict";
 var ViewController = Object.create(Object.prototype, {
     _views: {
         writable: true,
@@ -54,21 +55,17 @@ var ViewController = Object.create(Object.prototype, {
                         view.init();
                         view.initialized = true;
                     }
-                    cEvent = Object.create(CustomEvent);
-                    cEvent.initEvent(operation, false);
+                    var cEvent = Object.create(CustomEvent);
+                    cEvent.initEvent(operation, true);
                     cEvent.auxData = auxData;
                     view.dispatchEvent(cEvent);
-                    /*if (view.redraw === true) { //Whats the trade off between this and setTimeout ??
-                        view.draw();
-                        view.redraw = false;
-                    }*/
                     //Returns if the event gets preventDefault()
-                    return !cEvent.returnValue;
+                    return cEvent.returnValue;
                 } else {
                     if (operation !== 'blur') {
                         view(auxData);
                     }
-                    return false;
+                    return true;
                 } //IF Not instanceof Function
             } //IF View
         } //Function

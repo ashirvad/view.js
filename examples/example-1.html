@@ -18,12 +18,7 @@
 			}
 		})
 		 dispatcher.addEventListener('foo', target);
-		var newEvent = Object.create(CustomEvent, {
-			cancelable: {
-				writable: false,
-				value: 'foo-bar'
-			}
-		});debugger
+		var newEvent = Object.create(CustomEvent);
 		newEvent.initEvent('foo', false);
 		setTimeout(function () {
 			dispatcher.dispatchEvent(newEvent);
